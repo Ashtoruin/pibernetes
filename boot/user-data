@@ -1,0 +1,14 @@
+#cloud-config
+packages:
+  - vim
+  - python3-pip
+users:
+  - default
+  - name: rbernau
+    gecos: RJ Bernau
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    lock_passwd: true
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDYfQSKsP7wLLIRhOVfVwyPX7HGmorYCJCL0aANiyf5xY2GMf6G7Rro2/nqoVRUW+Phl6NEO6TWrsiy36YRcfu/V4BhTb2NHkPhEDekAsy+8ySAYp1nGIUMytgsxqI6mVX9lkb5p+62+UP0PDl0+reAPykOj7e0FDfAtXjatDv/kwE57B9YvymCuh10vTsg342pvRLjURoO1FeLGzlhD7wq3kUAkxnztvdu+MxLh2N0bCstUKWUwBuAv6aF2/hFUqkEZsaNM2q21lUlsXQss/W1l7358Evfpg1Bhm7fS1vgTqnu5EYRIdyOZyH05XzYhQPBwkTwKfueUBs+Ol+7uaK76oVoACNSMHIGPxQ06TaYakqVhllQjmaKKzH8EVNybXLkpjSsW+sp8muYdItTNvAMbmh+YkcyCXHqYzS2hGtQKnzRuROn2EfTdQgf0/YlHITW1BrMppLZVpMIqoaEh2fbNRpEhXivSoDoSiRR14LEscxM8xOLBQUWGRLj3YuXQss=
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCkcoQrSrN0B2MzmlyDrj3Oa52ABJ4Ku8VlSWh8G5PMSb1ZUGmGWyV2f52FUHtAVCpLnvrAGgTcxmy1OqT10G+tpalmvEc31T02aa3UfcWyL/OwCU7FVphCq2PIycOMSv3iFQrtO1ydujq8lozRZp8WzJg9IpKY6CTM0VWPXpKVzBAy1AoJqcKcLGpe7xKtQGbr+ywyebHT2Ulf7kf4qbL25xgBLslEd5m5olqMiH09Ik/QukoaQpfKZ0G3735tmihOwSY2qeXGrELlhdZZWf0GICB+mvVcmAeLXqihxHK8kyp08307qQvPfLCMyWJiCqxoF+5dXxvjVFytf8d2zQwb
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAwS/pnb7Dh0vWWZiBc4tqLxl64/0FnpUWXPDihn+whEAyb11IhKZzT7YkGj5CzXEtOPwPx/Z663DgbNkEri/h2+V97+8gp+bPZCm0uIbbiky2VO2JClquERmvlO4OQkD8JJ+soggpM32Wb4PiMTm3Rrt8R7vwJKofd5i9HpVNHgnKRKvHjCaaCCVoHPIeih+blz2tBS0T5+3G5Y7KVvcvt4KsfjWTqgYAWxaKLl9ixPkliEjpMvYxt74yORpOiaq1OBD10l2F2oCzEKehR9RbbPKy3WaCBcHFXCFj9WeJ3UDszxGIWkRQOZkS26NmmP2RW6wYmw2gyGLWxc+kBqOv
