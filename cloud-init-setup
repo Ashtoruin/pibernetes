@@ -89,11 +89,10 @@ sudo tee /boot/meta-data <<'YAML'
 instance-id: iid-raspberrypi-nocloud
 network-interfaces: |
   iface eth0 inet static
-  address 10.0.0.1
-  network 10.0.0.0
+  address 10.0.0.0
   netmask 255.255.255.0
-  broadcast 10.0.0.0
   gateway 10.0.0.1
+  broadcast 10.0.0.0
 YAML
 
 # Create user-data
