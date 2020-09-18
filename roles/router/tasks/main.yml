@@ -1,0 +1,82 @@
+---
+#DHCP
+- name: Install isc-dhcp-server
+  package:
+    name: isc-dhcp-server
+    state: present
+
+- name: Setup eth0 interface with static ip
+  template:
+    src: "eth0.j2"
+    dest: "/etc/network/interfaces.d/eth0"
+    owner: root
+    group: root
+    mode: 600
+  notify: reboot
+    
+- name: Disable dhcpcd for eth0
+  template:
+    src: "dhcpcd.conf.j2"
+    dest: "/etc/dhcpcd.conf"
+    owner: root
+    group: root
+    mode: 600
+  notify: reboot
+
+- name: Copy dhcpd.conf file
+  template:
+    src: "dhcpd.conf.j2"
+    dest: "/etc/dhcp/dhcpd.conf"
+    owner: root
+    group: root
+    mode: 600
+  notify: reboot
+
+- name: Use eth0 for DHCP server
+  replace:
+    path: /etc/default/isc-dhcp-server
+    regexp: 'INTERFACESv4=""'
+    replace: 'INTERFACESv4="eth0"'
+  notify: reboot
+
+# Routing
+- name: Enable IPv4 forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    state: present
+    reload: yes
+
+- name: Copy iptables.ipv4.nat into place, backing up the original if different
+  copy:
+    src: iptables.ipv4.nat
+    dest: /etc/iptables.ipv4.nat
+    owner: root
+    group: root
+    mode: '0600'
+    backup: yes
+  notify: reboot
+
+- name: Restore iptables on reboots
+  lineinfile:
+    line: "iptables-restore < /etc/iptables.ipv4.nat"
+    dest: "/etc/rc.local"
+    insertbefore: "exit 0"
+
+# DNS
+- name: install the latest version of bind9
+  package:
+    name:
+      - bind9
+      - bind9utils
+      - dnsutils
+    state: latest
+    
+- name: Copy named.conf.options file
+  template:
+    src: "named.conf.options.j2"
+    dest: "/etc/bind/named.conf.options"
+    owner: root
+    group: root
+    mode: 644
+  notify: reboot
