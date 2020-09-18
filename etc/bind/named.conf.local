@@ -1,0 +1,23 @@
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+include "/etc/bind/ddns.key";
+
+zone "kubernetes" {
+     type master;
+     notify no;
+     file "/var/cache/bind/db.kubernetes";
+     allow-update { key DDNS_UPDATE; };
+};
+
+zone "0.0.10.in-addr.arpa" {
+     type master;
+     notify no;
+     file "/var/cache/bind/db.10.0.0";
+     allow-update { key DDNS_UPDATE; };
+};
