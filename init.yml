@@ -8,3 +8,4 @@
     - include: handlers/main.yml
   roles:
     - role: router
+    - role: k3s
