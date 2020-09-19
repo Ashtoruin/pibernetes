@@ -2,4 +2,4 @@
 - name: Delete default user account
   user:
     name: pi
-    state: absent
+    password_lock: yes

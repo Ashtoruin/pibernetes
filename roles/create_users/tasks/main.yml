@@ -1,5 +1,6 @@
 ---
 - name: Passwordless Sudo
+  lineinfile:
     path: /etc/sudoers
     state: present
     regexp: '^%sudo'

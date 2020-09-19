@@ -1,0 +1,18 @@
+---
+# Need to create new users before we can delete the default user
+- hosts:
+  - worker
+  - master
+  gather_facts: yes
+  become: yes
+  # Run initial create users with the default pi user/password
+  tasks:
+  - name: install packages
+    package:
+      name:
+        - stress-ng
+        - mesa-utils
+      state: present
+  - name: stress test
+    shell: stress-ng --cpu 0 --cpu-method fft
+    

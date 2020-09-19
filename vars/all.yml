@@ -9,11 +9,11 @@ extra_agent_args: ""
 dhcp_enabled: true
 nat_forwarding_enabled: true
 dns_enabled: true
+pxe_boot_enabled: false
 
 subnet: 10.0.0.0
 subnet_size: "/24"
 netmask: 255.255.255.0
 router: 10.0.0.1
-broadcast: 10.0.0.0
 dhcp_start_range: 10.0.0.20
 dhcp_end_range: 10.0.0.100

@@ -5,4 +5,8 @@
   when: nat_forwarding_enabled
 - import_tasks: dns.yml
   when: dns_enabled
-
+  
+- name: Install tftp-hpa
+  package:
+    name: tftp-hpa
+    state: present

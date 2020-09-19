@@ -5,7 +5,7 @@
     state: present
     line: "{{ item }}"
   with_items:
-    - # Configure PoE Hat fan speed
+    - "# Configure PoE Hat fan speed"
     - dtoverlay=rpi-poe
     - dtparam=poe_fan_temp0=50000,poe_fan_temp0_hyst=5000
     - dtparam=poe_fan_temp1=60000,poe_fan_temp1_hyst=2000
