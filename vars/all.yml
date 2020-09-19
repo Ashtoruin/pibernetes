@@ -1,0 +1,17 @@
+---
+k3s_version: v1.18.9+k3s1
+systemd_dir: /etc/systemd/system
+master_ip: "{{ hostvars[groups['master'][0]]['ansible_host'] | default(groups['master'][0]) }}"
+extra_server_args: ""
+extra_agent_args: ""
+
+# router settings
+testing_enabled: true
+dhcp_enabled: true
+
+subnet: 10.0.0.0
+subnet_size: "/24"
+netmask: 255.255.255.0
+router: 10.0.0.1
+dhcp_start_range: 10.0.0.20
+dhcp_end_range: 10.0.0.100

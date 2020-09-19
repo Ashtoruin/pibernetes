@@ -1,0 +1,15 @@
+- name: Test Static IP
+  shell:  ip -f inet addr show eth0 | grep -Po 'inet \K[\d.]+'
+  register: staticIp
+  changed_when: false
+  failed_when: staticIp.stdout_lines[0] != "10.0.0.1"
+
+- name: Create Virtual eth0:1 to test DHCP
+  shell: sudo dhclient eth0:1
+  changed_when: false
+
+- name: Test eth0:1 IP
+  shell:  ip -f inet addr show eth0 | grep -Po 'inet \K[\d.]+'
+  register: dhcpIp
+  changed_when: false
+  failed_when: dhcpIp.stdout_lines[1] is not regex("10\.0\.0\..*") 
