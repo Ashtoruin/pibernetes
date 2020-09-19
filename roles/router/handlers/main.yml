@@ -1,0 +1,17 @@
+---
+# reboot should be defined before all verify tasks
+# (handlers run in order defined, not order called)
+- name: reboot
+  reboot:
+
+- name: verify-dhcp
+  service:
+    name: isc-dhcp-server
+    state: started
+    enabled: yes
+
+- name: verify-dns
+  service:
+    name: bind9
+    state: started
+    enabled: yes

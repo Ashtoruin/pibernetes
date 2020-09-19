@@ -33,4 +33,5 @@ slaac private
 # Static IP configuration:
 interface eth0
 static ip_address={{ router }}{{ subnet_size }}
+static routers={{ router }}
 metric 400

@@ -1,0 +1,9 @@
+set fan speed
+create users
+populate ssh keys
+disable passwords
+fail2ban
+ufw?
+
+
+Notes: Need to figure out how to delete the pi user better

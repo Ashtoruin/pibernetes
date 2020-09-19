@@ -1,0 +1,14 @@
+---
+users:
+  - 
+    username: rbernau
+    github_username: Ashtoruin
+    comment: Roland Bernau
+    shell: /bin/bash
+    groups: adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,gpio,i2c,spi
+  - 
+    username: mdawson
+    comment: Matthew Dawson
+    github_username: matthew-dawson
+    shell: /bin/bash
+    groups: adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,gpio,i2c,spi

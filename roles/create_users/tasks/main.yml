@@ -1,0 +1,22 @@
+---
+- name: Passwordless Sudo
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
+- name: Create a (non default) user account
+  user:
+    name: "{{ item.username }}"
+    shell: "{{ item.shell }}"
+    comment: "{{ item.comment }}"
+    groups: "{{ item.groups }}"
+    password_lock: yes
+  with_items: "{{ users }}"
+
+- name: Deploy user's SSH key (based on github username)
+  authorized_key:
+    user: "{{ item.username }}"
+    key: "https://github.com/{{ item.github_username }}.keys"
+  with_items: "{{ users }}"

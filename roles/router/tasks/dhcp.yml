@@ -1,0 +1,40 @@
+---
+- name: Install isc-dhcp-server
+  package:
+    name: isc-dhcp-server
+    state: present
+  notify: 
+    - reboot
+    - verify-dhcp
+
+- name: Template /etc/dhcpcd.conf (static IP for eth0)
+  template:
+    src: "dhcpcd.conf.j2"
+    dest: "/etc/dhcpcd.conf"
+    owner: root
+    group: root
+    mode: 600
+  notify: 
+    - reboot
+    - verify-dhcp
+
+- name: Template dhcpd.conf file (dhcp server basic configuration)
+  template:
+    src: "dhcpd.conf.j2"
+    dest: "/etc/dhcp/dhcpd.conf"
+    owner: root
+    group: root
+    mode: 600
+  notify: 
+    - reboot
+    - verify-dhcp
+
+- name: Template /etc/default/isc-dhcp-server (use eth0 for DHCP server)
+  replace:
+    path: /etc/default/isc-dhcp-server
+    regexp: 'INTERFACESv4=""'
+    replace: 'INTERFACESv4="eth0"'
+  notify: 
+    - reboot
+    - verify-dhcp
+ 

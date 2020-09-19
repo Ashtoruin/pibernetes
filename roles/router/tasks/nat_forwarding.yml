@@ -1,0 +1,23 @@
+---
+- name: Enable IPv4 forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    state: present
+    reload: yes
+
+- name: Copy iptables.ipv4.nat into place, backing up the original if different
+  copy:
+    src: iptables.ipv4.nat
+    dest: /etc/iptables.ipv4.nat
+    owner: root
+    group: root
+    mode: '0600'
+    backup: yes
+  notify: reboot
+
+- name: Restore iptables on reboots
+  lineinfile:
+    line: "iptables-restore < /etc/iptables.ipv4.nat"
+    dest: "/etc/rc.local"
+    insertbefore: "exit 0" 
