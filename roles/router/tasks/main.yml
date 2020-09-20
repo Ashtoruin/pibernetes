@@ -1,6 +1,8 @@
 ---
 - import_tasks: dhcp.yml
   when: dhcp_enabled
+- import_tasks: dns.yml
+  when: dns_enabled
 
 - import_tasks: testing/main.yml
   when: testing_enabled

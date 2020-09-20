@@ -5,7 +5,6 @@
     state: present
   notify: 
     - reboot
-    - verify-dhcp
 
 - name: Template /etc/dhcpcd.conf (static IP for eth0)
   template:
@@ -16,7 +15,6 @@
     mode: 600
   notify: 
     - reboot
-    - verify-dhcp
 
 - name: Template dhcpd.conf file (dhcp server basic configuration)
   template:
@@ -27,7 +25,6 @@
     mode: 600
   notify: 
     - reboot
-    - verify-dhcp
 
 - name: Template /etc/default/isc-dhcp-server (use eth0 for DHCP server)
   replace:
@@ -36,5 +33,4 @@
     replace: 'INTERFACESv4="eth0"'
   notify: 
     - reboot
-    - verify-dhcp
- 
+
