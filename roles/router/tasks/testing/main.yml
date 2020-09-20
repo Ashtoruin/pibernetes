@@ -1,3 +1,6 @@
+- name: force all notified handlers to run before we test
+  meta: flush_handlers
+
 - name: Test Static IP
   shell:  ip -f inet addr show eth0 | grep -Po 'inet \K[\d.]+'
   register: staticIp
@@ -5,7 +8,7 @@
   failed_when: staticIp.stdout_lines[0] != "10.0.0.1"
 
 - name: Create Virtual eth0:1 to test DHCP
-  shell: sudo dhclient eth0:1
+  shell: dhclient eth0:1
   changed_when: false
 
 - name: Test eth0:1 IP
@@ -13,3 +16,13 @@
   register: dhcpIp
   changed_when: false
   failed_when: dhcpIp.stdout_lines[1] is not regex("10\.0\.0\..*") 
+
+- name: reboot to clean up eth0:1 interface (removing it isn't enough)
+  reboot:
+  changed_when: false
+
+- name: Test dns
+  shell: dig +short @localhost google.com
+  register: dns
+  changed_when: false
+  failed_when: dns.stdout is not regex('^([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\.[0-9]{1,3}$')

@@ -2,6 +2,9 @@
 #
 # Sample configuration file for ISC dhcpd
 #
+{% if dns_enabled %}
+option domain-name-servers {{ router }};
+{% endif %}
 {% if dhcp_enabled %}
 subnet {{ subnet }} netmask {{ netmask }} {
   range {{ dhcp_start_range }} {{ dhcp_end_range }};
