@@ -6,8 +6,10 @@ extra_server_args: ""
 extra_agent_args: ""
 
 # router settings
-testing_enabled: true
+testing_enabled: false
 dhcp_enabled: true
+dns_enabled: true
+nat_forwarding_enabled: true
 
 subnet: 10.0.0.0
 subnet_size: "/24"

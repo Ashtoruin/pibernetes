@@ -3,6 +3,8 @@
   when: dhcp_enabled
 - import_tasks: dns.yml
   when: dns_enabled
+- import_tasts: nat_forwarding.yml
+  when: nat_forwarding_enabled
 
 - import_tasks: testing/main.yml
   when: testing_enabled
