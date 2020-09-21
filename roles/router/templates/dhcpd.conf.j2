@@ -2,6 +2,8 @@
 #
 # Sample configuration file for ISC dhcpd
 #
+# Unsure allow booting required 100%
+allow booting;
 {% if dns_enabled %}
 option domain-name-servers {{ router }};
 {% endif %}
@@ -10,13 +12,10 @@ subnet {{ subnet }} netmask {{ netmask }} {
   range {{ dhcp_start_range }} {{ dhcp_end_range }};
   option routers {{ router }};
   {% if pxe_boot_enabled %}
-  allow booting;
-  allow bootp;
-  option tftp-server-name {{ router }};
-  option bootfile-name "/tftpboot/bootcode.bin";
   option vendor-class-identifier "PXEClient";
-  {% endif %}
-}
+  option vendor-encapsulated-options "Raspberry Pi Boot";
+  option tftp-server-name {{ router }};
+  option bootfile-name "bootcode.bin";
 {% endif %}
 
 # option definitions common to all supported networks...
