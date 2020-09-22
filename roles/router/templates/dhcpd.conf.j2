@@ -4,6 +4,7 @@
 #
 # Unsure allow booting required 100%
 allow booting;
+ignore-client-uids true;
 {% if dns_enabled %}
 option domain-name-servers {{ router }};
 {% endif %}
