@@ -11,11 +11,13 @@ option domain-name-servers {{ router }};
 subnet {{ subnet }} netmask {{ netmask }} {
   range {{ dhcp_start_range }} {{ dhcp_end_range }};
   option routers {{ router }};
-  {% if pxe_boot_enabled %}
+{% if pxe_boot_enabled %}
   option vendor-class-identifier "PXEClient";
   option vendor-encapsulated-options "Raspberry Pi Boot";
-  option tftp-server-name {{ router }};
+  option tftp-server-name "{{ router }}";
   option bootfile-name "bootcode.bin";
+{% endif %}
+}
 {% endif %}
 
 # option definitions common to all supported networks...

@@ -1,6 +1,6 @@
 ---
 # Need to create new users before we can delete the default user
-- hosts: worker
+- hosts: all
   gather_facts: yes
   become: yes
   # Run initial create users with the default pi user/password
@@ -12,10 +12,15 @@
   roles:
     - role: create_users
       ignore_errors: yes
+  tasks:
+    - reboot:
+
 # Now that we're no longer using the default user with ansible we can disable it.
-- hosts: worker
+- hosts: all
   gather_facts: yes
   become: yes
+  vars:
+    ansible_user: rbernau
   vars_files:
     - vars/utils.yml
   roles:

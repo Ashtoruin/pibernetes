@@ -1,0 +1,7 @@
+# /etc/default/tftpd-hpa
+
+TFTP_USERNAME="tftp"
+TFTP_DIRECTORY="/nfs/client/boot"
+TFTP_ADDRESS="{{ router }}:69"
+RUN_DAEMON="YES"
+TFTP_OPTIONS="--secure --ipv4 --verbose"

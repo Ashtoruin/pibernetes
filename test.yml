@@ -1,0 +1,14 @@
+---
+# Need to create new users before we can delete the default user
+- hosts: all
+  gather_facts: yes
+  become: yes
+  vars_files:
+    - vars/all.yml
+  tasks:
+    - name: Do Image shit
+      script: 
+        cmd: "roles/pxeboot/scripts/test.sh"
+        chdir: "/nfs/images"
+        executable: /bin/bash
+

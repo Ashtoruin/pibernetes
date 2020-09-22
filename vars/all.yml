@@ -9,7 +9,7 @@ extra_agent_args: ""
 dhcp_enabled: true
 nat_forwarding_enabled: true
 dns_enabled: true
-pxe_boot_enabled: false
+pxe_boot_enabled: true
 
 subnet: 10.0.0.0
 subnet_size: "/24"
