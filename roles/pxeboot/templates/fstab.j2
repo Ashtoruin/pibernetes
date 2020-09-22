@@ -1,2 +1,2 @@
 proc            /proc           proc    defaults          0       0
-{{ router }}:/nfs/client/boot /boot nfs defaults,vers=4.1,proto=tcp 0 0
+{{ router }}:/nfs/clients/boot/{{ item }} /boot nfs defaults,vers=4.1,proto=tcp 0 0

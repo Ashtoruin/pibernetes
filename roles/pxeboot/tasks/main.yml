@@ -22,10 +22,9 @@
     state: directory
     mode: '0755'
   with_items:
-    - /nfs/images
+    - /nfs/images/root
+    - /nfs/images/boot
     - /imgtmp
-    - /nfs/client/root
-    - /nfs/client/boot
 
 - name: Template /etc/exports (NFS basic configuration)
   template:
@@ -59,23 +58,66 @@
     path: /imgtmp
     state: absent
 
+- name: Create nfs client boot directories if they do not exist
+  file:
+    path: "/nfs/clients/boot/{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items: "{{ serial_numbers.workers }}"
+
+- name: Copy bootcode.bin to root
+  synchronize:
+    src: /nfs/images/boot/bootcode.bin
+    dest: /nfs/clients/boot
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: Create nfs client boot directories if they do not exist
+  file:
+    path: "/nfs/clients/root/{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items: "{{ serial_numbers.workers }}"
+
+- name: Synchronize boot directories
+  synchronize:
+    src: /nfs/images/boot/
+    dest: /nfs/clients/boot/{{ item }}
+  delegate_to: "{{ inventory_hostname }}"
+  with_items: "{{ serial_numbers.workers }}"
+
+- name: Synchronize root directories                    
+  synchronize:
+    src: /nfs/images/root/
+    dest: /nfs/clients/root/{{ item }}
+  delegate_to: "{{ inventory_hostname }}"
+  with_items: "{{ serial_numbers.workers }}"
+
 - name: Template fstab for NFS booting
   template:
     src: "fstab.j2"
-    dest: "/nfs/client/root/etc/fstab"
+    dest: "/nfs/clients/root/{{ item }}/etc/fstab"
     owner: root
     group: root
     mode: 644
+  with_items: "{{ serial_numbers.workers }}"
 
 - name: Template /boot/cmdline.txt
   template:
     src: "cmdline.txt.j2"
-    dest: "/nfs/client/boot/cmdline.txt"
+    dest: "/nfs/clients/boot/{{ item }}/cmdline.txt"
     mode: 644
+  with_items: "{{ serial_numbers.workers }}"
 
-- name: Recursively change ownership of a directory
+- name: Ensure boot is readable
   file:
-    path: /nfs/client/boot
+    path: /nfs/clients/boot/{{ item }}
     state: directory
     recurse: yes
+    mode: '0755'
+  with_items: "{{ serial_numbers.workers }}"
+
+- name: Ensure boot is readable
+  file:
+    path: /nfs/clients/boot/bootcode.bin
+    state: file
     mode: '0755'

@@ -17,3 +17,13 @@ netmask: 255.255.255.0
 router: 10.0.0.1
 dhcp_start_range: 10.0.0.20
 dhcp_end_range: 10.0.0.100
+
+serial_numbers:
+  workers:
+    - 6741c5a8
+    - 8c95701d
+    - 1847fa77
+    - 2e40d4b1
+    - ed5c1703
+    - fe31d916
+    - f5ee6dfb
