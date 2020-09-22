@@ -2,9 +2,11 @@
 #
 # Sample configuration file for ISC dhcpd
 #
-# Unsure allow booting required 100%
+{% if pxe_boot_enabled %}
 allow booting;
+#Prevent multiple IPs when PXE Booting
 ignore-client-uids true;
+{% endif %}
 {% if dns_enabled %}
 option domain-name-servers {{ router }};
 {% endif %}
