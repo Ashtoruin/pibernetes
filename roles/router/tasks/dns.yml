@@ -8,7 +8,6 @@
     state: latest
   notify: 
     - reboot
-    - verify-dns
 
 - name: Copy named.conf.options file
   template:
@@ -19,7 +18,16 @@
     mode: 644
   notify: 
     - reboot
-    - verify-dns
+
+- name: Copy named.conf.options file
+  template:
+    src: "named.conf.local.j2"
+    dest: "/etc/bind/named.conf.local"
+    owner: root
+    group: root
+    mode: 644
+  notify:
+    - reboot
 
 - name: Template /etc/dhcpcd.conf (option domain-name-servers)
   template:
@@ -30,4 +38,3 @@
     mode: 600
   notify: 
     - reboot
-    - verify-dhcp

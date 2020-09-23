@@ -5,16 +5,13 @@
   become: yes
   # Run initial create users with the default pi user/password
   vars:
-    ansible_user: pi
-    ansible_password: raspberry
+#    ansible_user: pi
+#    ansible_password: raspberry
   vars_files:
     - vars/utils.yml
   roles:
     - role: create_users
       ignore_errors: yes
-  tasks:
-    - reboot:
-
 # Now that we're no longer using the default user with ansible we can disable it.
 - hosts: all
   gather_facts: yes

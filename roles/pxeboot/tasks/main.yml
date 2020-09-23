@@ -1,5 +1,5 @@
 ---
-- name: Install tftpd-hpa
+- name: Install packages
   package:
     name: 
       - tftpd-hpa
@@ -24,7 +24,6 @@
   with_items:
     - /nfs/images/root
     - /nfs/images/boot
-    - /imgtmp
 
 - name: Template /etc/exports (NFS basic configuration)
   template:
@@ -39,98 +38,7 @@
     url: https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2020-08-24/2020-08-20-raspios-buster-arm64-lite.zip
     dest: /nfs/images/2020-08-20-raspios-buster-arm64-lite.zip
     checksum: sha256:https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2020-08-24/2020-08-20-raspios-buster-arm64-lite.zip.sha256
-
+  register: image_state
 # This can download a file but we can't check checksums then
-- name: Unarchive raspbian image
-  unarchive:
-    src: /nfs/images/2020-08-20-raspios-buster-arm64-lite.zip
-    dest: /nfs/images
-    remote_src: yes
-
-- name: Do Image shit
-  script:
-    cmd: "scripts/test.sh"
-    chdir: "/nfs/images"
-    executable: /bin/bash
-
-- name: delete imgtmp dir
-  file:
-    path: /imgtmp
-    state: absent
-
-- name: Create nfs client boot directories if they do not exist
-  file:
-    path: "/nfs/clients/boot/{{ item }}"
-    state: directory
-    mode: '0755'
-  with_items: "{{ serial_numbers.workers }}"
-
-- name: Copy bootcode.bin to root
-  synchronize:
-    src: /nfs/images/boot/bootcode.bin
-    dest: /nfs/clients/boot
-  delegate_to: "{{ inventory_hostname }}"
-
-- name: Configure PoE Hat fan
-  lineinfile:
-    path: /nfs/images/boot/config.txt
-    state: present
-    line: "{{ item }}"
-  with_items:
-    - "# Configure PoE Hat fan speed"
-    - dtoverlay=rpi-poe
-    - dtparam=poe_fan_temp0=50000,poe_fan_temp0_hyst=5000
-    - dtparam=poe_fan_temp1=60000,poe_fan_temp1_hyst=2000
-    - dtparam=poe_fan_temp2=65000,poe_fan_temp1_hyst=2000
-    - dtparam=poe_fan_temp3=67500,poe_fan_temp1_hyst=2000
-
-- name: Create nfs client boot directories if they do not exist
-  file:
-    path: "/nfs/clients/root/{{ item }}"
-    state: directory
-    mode: '0755'
-  with_items: "{{ serial_numbers.workers }}"
-
-- name: Synchronize boot directories
-  synchronize:
-    src: /nfs/images/boot/
-    dest: /nfs/clients/boot/{{ item }}
-  delegate_to: "{{ inventory_hostname }}"
-  with_items: "{{ serial_numbers.workers }}"
-
-- name: Synchronize root directories                    
-  synchronize:
-    src: /nfs/images/root/
-    dest: /nfs/clients/root/{{ item }}
-  delegate_to: "{{ inventory_hostname }}"
-  with_items: "{{ serial_numbers.workers }}"
-
-- name: Template fstab for NFS booting
-  template:
-    src: "fstab.j2"
-    dest: "/nfs/clients/root/{{ item }}/etc/fstab"
-    owner: root
-    group: root
-    mode: 644
-  with_items: "{{ serial_numbers.workers }}"
-
-- name: Template /boot/cmdline.txt
-  template:
-    src: "cmdline.txt.j2"
-    dest: "/nfs/clients/boot/{{ item }}/cmdline.txt"
-    mode: 644
-  with_items: "{{ serial_numbers.workers }}"
-
-- name: Ensure boot is readable
-  file:
-    path: /nfs/clients/boot/{{ item }}
-    state: directory
-    recurse: yes
-    mode: '0755'
-  with_items: "{{ serial_numbers.workers }}"
-
-- name: Ensure boot is readable
-  file:
-    path: /nfs/clients/boot/bootcode.bin
-    state: file
-    mode: '0755'
+- import_tasks: pxe_nfs_images.yml
+  when: image_state.changed or regen_pxe_images

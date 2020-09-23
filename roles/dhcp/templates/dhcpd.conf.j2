@@ -4,8 +4,9 @@
 #
 
 
+{% if dns_enabled %}
 option domain-name "kubernetes";
-option domain-name-servers 10.0.0.1;
+option domain-name-servers {{ router }};
 
 ddns-updates on;
 ddns-update-style interim;
@@ -26,16 +27,12 @@ zone 0.0.10.in-addr.arpa. {
   primary 127.0.0.1;
   key DDNS_UPDATE;
 }
-
+{% endif %}
 {% if pxe_boot_enabled %}
 allow booting;
 #Prevent multiple IPs when PXE Booting
 ignore-client-uids true;
 {% endif %}
-{% if dns_enabled %}
-option domain-name-servers {{ router }};
-{% endif %}
-{% if dhcp_enabled %}
 subnet {{ subnet }} netmask {{ netmask }} {
   range {{ dhcp_start_range }} {{ dhcp_end_range }};
   option routers {{ router }};
@@ -46,7 +43,6 @@ subnet {{ subnet }} netmask {{ netmask }} {
   option bootfile-name "bootcode.bin";
 {% endif %}
 }
-{% endif %}
 
 # option definitions common to all supported networks...
 #option domain-name "example.org";

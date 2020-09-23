@@ -4,6 +4,15 @@
   become: yes
   vars_files:
     - vars/all.yml
+  handlers:
+    - name: reboot
+      reboot:
   roles:
-    - role: router
+    - role: dhcp
+      when: dhcp_enabled
+    - role: dns
+      when: dns_enabled
+    - role: nat_forwarding
+      when: nat_forwarding_enabled
+    - role: k3s
     - role: pxeboot

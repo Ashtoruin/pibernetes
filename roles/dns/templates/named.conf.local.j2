@@ -1,0 +1,15 @@
+include "/etc/bind/ddns.key";
+
+zone "kubernetes" {
+     type master;
+     notify no;
+     file "/var/cache/bind/db.kubernetes";
+     allow-update { key DDNS_UPDATE; };
+};
+
+zone "0.0.10.in-addr.arpa" {
+     type master;
+     notify no;
+     file "/var/cache/bind/db.10.0.0";
+     allow-update { key DDNS_UPDATE; };
+};

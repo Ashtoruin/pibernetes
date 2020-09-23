@@ -1,0 +1,73 @@
+---
+- name: install the latest version of bind9
+  package:
+    name:
+      - bind9
+      - bind9utils
+      - dnsutils
+    state: latest
+  notify: 
+    - reboot
+
+- name: Copy named.conf.options file
+  template:
+    src: "named.conf.options.j2"
+    dest: "/etc/bind/named.conf.options"
+    owner: root
+    group: root
+    mode: 644
+  notify: 
+    - reboot
+
+- name: Copy named.conf.local file
+  template:
+    src: "named.conf.local.j2"
+    dest: "/etc/bind/named.conf.local"
+    owner: root
+    group: root
+    mode: 644
+  notify:
+    - reboot
+
+- name: generate key
+  shell: "dnssec-keygen -a HMAC-MD5 -b 128 -r /dev/urandom -n USER DDNS_UPDATE"
+  register: ddns_key
+
+- name: grab key
+  shell: "awk -F'Key: ' '/Key: /{print $2}' {{ ddns_key.stdout }}.private"
+  register: ddns_key
+
+- name: template ddns.key file
+  template:
+    src: "ddns.key.j2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: 644
+  with_items:
+    - "/etc/bind/ddns.key"
+    - "/etc/dhcp/ddns.key"
+  notify:
+    - reboot
+
+- name: template db.xxx files
+  template:
+    src: "{{ item }}.j2"
+    dest: "/var/cache/bind/{{ item }}"
+    owner: root
+    group: root
+    mode: 644
+  with_items:
+    - "db.kubernetes"
+    - "db.10.0.0"
+
+- name: symlink db.xxx to /etc/bind/
+  file:
+    src: "/var/cache/bind/{{ item }}"
+    dest: "/etc/bind/{{ item }}"
+    owner: root
+    group: root
+    state: link
+  with_items:
+    - "db.kubernetes"
+    - "db.10.0.0"

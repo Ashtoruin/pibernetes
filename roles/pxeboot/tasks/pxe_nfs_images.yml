@@ -1,0 +1,137 @@
+---
+- name: Unarchive raspbian image
+  unarchive:
+    src: /nfs/images/2020-08-20-raspios-buster-arm64-lite.zip
+    dest: /nfs/images
+    remote_src: yes
+
+- name: Create nfs directories if they do not exist
+  file:
+    path: /imgtmp
+    state: directory
+    mode: '0755'
+
+- name: Do Image shit
+  script:
+    cmd: scripts/test.sh
+    chdir: "/nfs/images"
+    executable: /bin/bash
+
+- name: delete imgtmp dir
+  file:
+    path: /imgtmp
+    state: absent
+
+- name: Create nfs client boot directories if they do not exist
+  file:
+    path: "/nfs/clients/boot/{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items: "{{ serial_numbers.workers }}"
+
+- name: Copy bootcode.bin to root
+  synchronize:
+    src: /nfs/images/boot/bootcode.bin
+    dest: /nfs/clients/boot
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: Download k3s binary arm64
+  get_url:
+    url: https://github.com/rancher/k3s/releases/download/{{ k3s_version }}/k3s-arm64
+    dest: /nfs/images/root/usr/local/bin/k3s
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy K3s service file
+  template:
+    src: "k3s-node.service.j2"
+    dest: "/nfs/images/root/etc/systemd/system/k3s-node.service"
+    owner: root
+    group: root
+    mode: 0755
+
+#- name: Enable and check K3s service
+#  systemd:
+#    name: k3s-node
+#    daemon_reload: yes
+#    state: restarted
+#    enabled: yes
+
+- name: install k3s on startup
+  lineinfile:
+    line: "systemcl start k3s-node.service"
+    dest: "/etc/rc.local"
+    insertbefore: "exit 0" 
+
+- name: Configure PoE Hat fan
+  lineinfile:
+    path: /nfs/images/boot/config.txt
+    state: present
+    line: "{{ item }}"
+  with_items:
+    - "# Configure PoE Hat fan speed"
+    - dtoverlay=rpi-poe
+    - dtparam=poe_fan_temp0=50000,poe_fan_temp0_hyst=5000
+    - dtparam=poe_fan_temp1=60000,poe_fan_temp1_hyst=2000
+    - dtparam=poe_fan_temp2=65000,poe_fan_temp1_hyst=2000
+    - dtparam=poe_fan_temp3=67500,poe_fan_temp1_hyst=2000
+
+- name: Create nfs client boot directories if they do not exist
+  file:
+    path: "/nfs/clients/root/{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items: "{{ serial_numbers.workers }}"
+
+- name: Synchronize boot directories
+  synchronize:
+    src: /nfs/images/boot/
+    dest: /nfs/clients/boot/{{ item }}
+  delegate_to: "{{ inventory_hostname }}"
+  with_items: "{{ serial_numbers.workers }}"
+
+- name: Synchronize root directories                    
+  synchronize:
+    src: /nfs/images/root/
+    dest: /nfs/clients/root/{{ item }}
+  delegate_to: "{{ inventory_hostname }}"
+  with_items: "{{ serial_numbers.workers }}"
+
+- name: set hostname /etc/hostname
+  lineinfile:
+    dest: "/nfs/clients/root/{{ item }}/etc/hostname"
+    regexp: raspberrypi
+    line: '{{ item }}'
+    state: present
+  with_items: "{{ serial_numbers.workers }}"
+
+- name: Template fstab for NFS booting
+  template:
+    src: "fstab.j2"
+    dest: "/nfs/clients/root/{{ item }}/etc/fstab"
+    owner: root
+    group: root
+    mode: 644
+  with_items: "{{ serial_numbers.workers }}"
+
+- name: Template /boot/cmdline.txt
+  template:
+    src: "cmdline.txt.j2"
+    dest: "/nfs/clients/boot/{{ item }}/cmdline.txt"
+    mode: 644
+  with_items: "{{ serial_numbers.workers }}"
+
+- name: Ensure boot is readable
+  file:
+    path: /nfs/clients/boot/{{ item }}
+    state: directory
+    recurse: yes
+    mode: '0755'
+  with_items: "{{ serial_numbers.workers }}"
+
+- name: Ensure boot is readable
+  file:
+    path: /nfs/clients/boot/bootcode.bin
+    state: file
+    mode: '0755'
