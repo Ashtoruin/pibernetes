@@ -16,5 +16,5 @@ export FIRST_USER_NAME=iot
 export FIRST_USER_PASS="${pi_pwd}"
 export ENABLE_SSH=1
 
-./pi-gen/build.sh
+sudo ./pi-gen/build.sh
 
