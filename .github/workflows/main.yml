@@ -5,5 +5,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
+      with:
+        path: main
+    - uses: actions/checkout@v3
+      with:
+        path: pi-gen
+        repository: RPi-Distro/pi-gen
     - name: build image
       run: ./wrapper_build.sh
