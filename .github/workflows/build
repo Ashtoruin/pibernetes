@@ -1,0 +1,9 @@
+name: Build Image
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: build image
+      run: ./wrapper_build.sh
