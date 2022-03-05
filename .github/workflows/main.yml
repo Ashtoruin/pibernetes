@@ -13,4 +13,4 @@ jobs:
         path: pi-gen
         repository: RPi-Distro/pi-gen
     - name: build image
-      run: ./wrapper_build.sh
+      run: ./main/wrapper_build.sh
