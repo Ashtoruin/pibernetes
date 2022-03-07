@@ -17,5 +17,5 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: img
-        path: /pi-gen/deploy/*
+        path: pi-gen/deploy/*
         retention-days: 5
